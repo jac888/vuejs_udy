@@ -14,9 +14,16 @@ const gravatar = require("gravatar");
 const bodyParser = require("body-parser");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
+// @jwt
+const jwt = require("jsonwebtoken");
+
+// @include secret for jwt
+const secret = require("../../config/keys");
+
 // $route  GET /api/user/test
 // @desc   返回請求的JSON
 // @access Public
+
 router.get("/test", (req, res) => {
   res.json({ msg: "logged in!" });
 });
@@ -80,7 +87,20 @@ router.post("/register", urlencodedParser, (req, res) => {
           if (!isMatch) return res.status(404).json({ password: "密碼錯誤！" });
 
           // jwt token come in to play
-          return res.json({ msg: "logging success!" });
+          //return res.json({ msg: "logging success!" });
+
+          // jwt rule
+          const rule = { id: user.id, name: user.name };
+
+          // jwt secert
+
+          jwt.sign(rule, secret.key, { expiresIn: 3600 }, (err, token) => {
+            if (err) console.log(err);
+            res.json({
+              sucess: true,
+              token: "Jackson" + token
+            });
+          });
         });
       })
       .catch(err => console.log(err));
