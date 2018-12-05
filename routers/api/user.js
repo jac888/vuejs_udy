@@ -27,9 +27,9 @@ const passport = require("passport");
 // @desc   返回請求的JSON
 // @access Public
 
-router.get("/test", (req, res) => {
-  res.json({ msg: "logged in!" });
-});
+// router.get("/test", (req, res) => {
+//   res.json({ msg: "logged in!" });
+// });
 
 // $route  POST /api/user/register
 // @desc   返回請求的JSON
@@ -40,7 +40,7 @@ router.post("/register", urlencodedParser, (req, res) => {
   //查詢數據庫是否有此email
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
-      res.status(400).json({ email: "此地址已經註冊過！" });
+      res.status(400).json("此地址已經註冊過！");
     } else {
       const avatar = gravatar.url(req.body.email, {
         s: "200",
@@ -51,6 +51,7 @@ router.post("/register", urlencodedParser, (req, res) => {
         name: req.body.name,
         email: req.body.email,
         avatar: avatar,
+        identity: req.body.identity,
         password: req.body.password
       });
       console.log(newUser);
@@ -79,21 +80,26 @@ router.post("/register", urlencodedParser, (req, res) => {
     const password = req.body.password;
     console.log(email);
     //query user in db
-    User.findOne({ email })
+    User.findOne({ email }) // <==== if object name and parameter are same
       .then(user => {
         console.log(user);
-        if (!user) return res.status(400).json({ email: "查無此E-Mail!" });
+        if (!user) return res.status(400).json("查無此E-Mail!");
         //return res.json({ msg: "user found!" });
 
         //compare password
         bcrypt.compare(password, user.password).then(isMatch => {
-          if (!isMatch) return res.status(404).json({ password: "密碼錯誤！" });
+          if (!isMatch) return res.status(404).json("密碼錯誤！");
 
           // jwt token come in to play
           //return res.json({ msg: "logging success!" });
 
           // jwt rule
-          const rule = { id: user.id, name: user.name };
+          const rule = {
+            id: user.id,
+            name: user.name,
+            avatar: user.avatar,
+            identity: user.identity
+          };
 
           // jwt secert
           jwt.sign(rule, secret.key, { expiresIn: 3600 }, (err, token) => {
@@ -120,7 +126,8 @@ router.post("/register", urlencodedParser, (req, res) => {
       res.json({
         id: req.user.id,
         name: req.user.name,
-        email: req.user.email
+        email: req.user.email,
+        identity: req.user.identity
       });
     }
   );
