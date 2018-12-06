@@ -87,4 +87,31 @@ router.get(
   }
 );
 
+// $route  POST /api/profiles/add
+// @desc   新增
+// @access Private
+
+router.post(
+  "/edit/:id",
+  urlencodedParser,
+  passport.authenticate("jwt", { session: false }),
+  (req, res) => {
+    const profileObj = {};
+    if (req.body.type) profileObj.type = req.body.type;
+    if (req.body.desc) profileObj.desc = req.body.desc;
+    if (req.body.income) profileObj.income = req.body.income;
+    if (req.body.expense) profileObj.expense = req.body.expense;
+    if (req.body.cash) profileObj.cash = req.body.cash;
+    if (req.body.remark) profileObj.remark = req.body.remark;
+
+    Profile.findByIdAndUpdate(
+      { _id: req.params.id },
+      { $set: profileObj },
+      { new: true }
+    ).then(profile => {
+      res.json(profile);
+    });
+  }
+);
+
 module.exports = router;

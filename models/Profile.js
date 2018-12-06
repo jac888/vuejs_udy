@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-
+//set this to avoid warning msg
+mongoose.set("useFindAndModify", false);
 const Schema = mongoose.Schema;
 const profileSchema = new Schema({
   type: {
