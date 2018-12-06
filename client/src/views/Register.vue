@@ -5,7 +5,7 @@
                 <span class="title">
                     盈幣電子交易平台
                 </span>
-                <el-form :model="registerUser" :rules="rules" ref="registerForm" label-width="100px" class="registerForm ">
+                <el-form :model="registerUser" :rules="rules" ref="registerUser" label-width="100px" class="registerForm">
                     <el-form-item label="用戶名" prop="name">
                         <el-input v-model="registerUser.name" placeholder="請輸入用戶名"></el-input>
                     </el-form-item>
@@ -25,7 +25,8 @@
                         </el-select>
                     </el-form-item>
                     <el-form-item>
-                        <el-button type="primary" class="sumbit_btn " @click="submitForm('registerForm')">註冊</el-button>
+                        <el-button type="primary" class="sumbit_btn" @click="submitForm('registerUser')">註冊</el-button>
+                        <!-- <el-button type="secondary" class="other_btn" @click="submitForm('something')">something</el-button> -->
                     </el-form-item>
                 </el-form>
             </div>
@@ -38,6 +39,13 @@ export default {
   name: "register",
   components: {},
   data() {
+    var validatePass = (rule, value, callback) => {
+      console.log(`value:${value}`);
+      console.log(this.registerUser);
+      if (value !== this.registerUser.password) {
+        return callback(new Error("密碼不一致！"));
+      } else callback();
+    };
     return {
       registerUser: {
         name: "",
@@ -45,8 +53,73 @@ export default {
         password: "",
         password2: "",
         identity: ""
+      },
+      rules: {
+        name: [
+          {
+            required: true,
+            message: "用戶名不能為空",
+            trigger: "blur"
+          },
+          {
+            min: 6,
+            max: 10,
+            message: "帳號長度為6個英數字至10個之間",
+            trigger: "blur"
+          }
+        ],
+        email: [
+          {
+            type: "email",
+            required: true,
+            message: "電子郵件地址不正確",
+            trigger: "blur"
+          }
+        ],
+        password: [
+          {
+            required: true,
+            message: "密碼不能為空",
+            trigger: "blur"
+          },
+          {
+            min: 8,
+            max: 10,
+            message: "密碼長度為8個英數字至10個之間",
+            trigger: "blur"
+          }
+        ],
+        password2: [
+          {
+            required: true,
+            message: "確認密碼不能為空",
+            trigger: "blur"
+          },
+          {
+            min: 8,
+            max: 10,
+            message: "密碼長度為8個英數字至10個之間",
+            trigger: "blur"
+          },
+          {
+            validator: validatePass,
+            trigger: "blur"
+          }
+        ]
       }
     };
+  },
+  methods: {
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          alert("submit!");
+        } else {
+          console.log("error submit!!");
+          return false;
+        }
+      });
+    }
   }
 };
 </script> 
