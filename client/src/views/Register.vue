@@ -19,7 +19,7 @@
                         <el-input type="password" v-model="registerUser.password2" placeholder="請確認密碼"></el-input>
                     </el-form-item>
                     <el-form-item label="選擇身份">
-                        <el-select v-model="registerUser.indentity" placeholder="請選擇身分">
+                        <el-select v-model="registerUser.identity" placeholder="請選擇身分">
                             <el-option label="管理員" value="manager"/>
                             <el-option label="使用者" value="user"/>
                         </el-select>
@@ -113,11 +113,24 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
-        } else {
-          console.log("error submit!!");
-          return false;
+          console.log(`this user info : ${this.registerUser.password}`);
+
+          this.$axios
+            ///api/user/register
+            .post("/api/user/register", this.registerUser)
+            .then(res => {
+              //註冊成功
+              this.$message({
+                message: "帳號註冊成功！",
+                type: "success"
+              });
+            });
+          this.$router.push("/index");
         }
+        //else {
+        //   console.log("error submit!!");
+        //   return false;
+        // }
       });
     }
   }

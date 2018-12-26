@@ -4,6 +4,10 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const app = express();
 
+//使用body-parser
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+
 //routers
 const usersRoute = require("./routers/api/user");
 const profilesRoute = require("./routers/api/profile");
@@ -22,10 +26,6 @@ mongoose
 //使用router
 app.use("/api/user", usersRoute);
 app.use("/api/profiles", profilesRoute);
-
-//使用body-parser
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
 
 //possport
 app.use(passport.initialize());

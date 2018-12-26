@@ -11,6 +11,7 @@ const User = require("../../models/User");
 const gravatar = require("gravatar");
 
 // @body-Parser
+
 const bodyParser = require("body-parser");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
@@ -27,9 +28,9 @@ const passport = require("passport");
 // @desc   返回請求的JSON
 // @access Public
 
-// router.get("/test", (req, res) => {
-//   res.json({ msg: "logged in!" });
-// });
+router.get("/test", (req, res) => {
+  res.json({ msg: "logged in!" });
+});
 
 // $route  POST /api/user/register
 // @desc   返回請求的JSON
@@ -47,6 +48,18 @@ router.post("/register", urlencodedParser, (req, res) => {
         r: "pg",
         d: "mm"
       });
+      var name1 = req.body.name;
+      var email1 = req.body.email;
+      var avatar1 = avatar;
+      var identity1 = req.body.identity;
+      var password1 = req.body.password;
+
+      console.log(name1);
+      console.log(email1);
+      console.log(avatar1);
+      console.log(identity1);
+      console.log(password1);
+
       const newUser = new User({
         name: req.body.name,
         email: req.body.email,
@@ -54,20 +67,23 @@ router.post("/register", urlencodedParser, (req, res) => {
         identity: req.body.identity,
         password: req.body.password
       });
-      console.log(newUser);
+      //console.log(newUser);
       const saltRounds = 10;
-      console.log(saltRounds);
+      //console.log("pass: " + newUser.password);
       bcrypt.hash(newUser.password, saltRounds, function(err, hash) {
         // Store hash in your password DB.
         console.log("pwd hash :" + hash);
-        if (err) throw err;
-        newUser.password = hash;
-        newUser
-          .save()
-          .then(user => res.json(user))
-          .catch(err => {
-            console.log(err);
-          });
+        if (err) {
+          throw err;
+        } else {
+          newUser.password = hash;
+          newUser
+            .save()
+            .then(user => res.json(user))
+            .catch(err => {
+              console.log(err);
+            });
+        }
       });
     }
   });
