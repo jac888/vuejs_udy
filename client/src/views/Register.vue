@@ -125,7 +125,7 @@ export default {
                 type: "success"
               });
             });
-          this.$router.push("/index");
+          this.$router.push("/login");
         }
         //else {
         //   console.log("error submit!!");
