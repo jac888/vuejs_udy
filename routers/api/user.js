@@ -106,7 +106,7 @@ router.post("/register", urlencodedParser, (req, res) => {
           };
 
           // jwt secert
-          jwt.sign(rule, secret.key, { expiresIn: 30 }, (err, token) => {
+          jwt.sign(rule, secret.key, { expiresIn: 15 }, (err, token) => {
             if (err) console.log(err);
             res.json({
               sucess: true,

@@ -48,7 +48,9 @@ export default {
       if (cmdItem === "info") this.showInfoList();
       if (cmdItem === "logout") this.logOut();
     },
-    showInfoList() {},
+    showInfoList() {
+      this.$router.push("/infoshow");
+    },
     logOut() {
       //delete token
       localStorage.removeItem("accessToken");
