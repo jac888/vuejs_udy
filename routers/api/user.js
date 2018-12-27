@@ -76,6 +76,48 @@ router.post("/register", urlencodedParser, (req, res) => {
     }
   });
 
+  // $route  POST /api/user/edit
+  // @desc   更新apikey
+  // @access Private
+  router.post(
+    "/edit/:id",
+    urlencodedParser,
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      //console.log("apikey:" + req.body.apikey);
+      //console.log("apisecret:" + req.body.apisecret);
+      console.log(`Request id: ${req.params.id}`);
+      const apiObj = {};
+      if (req.body.apikey) apiObj.apikey = req.body.apikey;
+      if (req.body.apisecret) apiObj.apisecret = req.body.apisecret;
+      User.updateOne(
+        {
+          _id: req.params.id,
+          "apikeys.apikey": { $ne: req.body.apikey },
+          "apikeys.apisecret": { $ne: req.body.apisecret }
+        },
+        {
+          $push: {
+            apikeys: {
+              $each: [
+                { apikey: req.body.apikey, apisecret: req.body.apisecret }
+              ]
+            }
+          }
+        }
+      ).then(
+        // { apikey: 6, apisecret: 7 },
+        // { apikey: 7, apisecret: 6 }
+        // ,
+        // $sort: { score: -1 },
+        // $slice: 3
+        user => {
+          res.json(user);
+        }
+      );
+    }
+  );
+
   // $route  POST /api/user/login
   // @desc   返回token jwt / passport
   // @access Public
@@ -106,7 +148,7 @@ router.post("/register", urlencodedParser, (req, res) => {
           };
 
           // jwt secert
-          jwt.sign(rule, secret.key, { expiresIn: 15 }, (err, token) => {
+          jwt.sign(rule, secret.key, { expiresIn: 3600 }, (err, token) => {
             if (err) console.log(err);
             res.json({
               sucess: true,

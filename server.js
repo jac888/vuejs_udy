@@ -11,14 +11,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //routers
 const usersRoute = require("./routers/api/user");
 const profilesRoute = require("./routers/api/profile");
+const apikeysRoute = require("./routers/api/apikey");
 
 //DB Config
 const db = require("./config/keys").mongoURI;
+
 //Connect mongodb
 mongoose
   .connect(
     db,
-    { useNewUrlParser: true }
+    { useCreateIndex: true, useNewUrlParser: true }
   )
   .then(() => console.log("Mlab connected!"))
   .catch(err => console.log("error: " + err));
@@ -26,6 +28,7 @@ mongoose
 //使用router
 app.use("/api/user", usersRoute);
 app.use("/api/profiles", profilesRoute);
+app.use("/api/apikeys", apikeysRoute);
 
 //possport
 app.use(passport.initialize());
