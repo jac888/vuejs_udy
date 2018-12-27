@@ -36,6 +36,10 @@ const actions = {
   },
   setUser: ({ commit }, user) => {
     commit(types.SET_USER, user);
+  },
+  loggedOut: ({ commit }) => {
+    commit(types.SET_AUTHENTICIATED, false);
+    commit(types.SET_USER, null);
   }
 };
 
