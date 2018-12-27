@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import jwt_decode from "jwt-decode";
 export default {
   name: "login",
   components: {},
@@ -67,20 +68,40 @@ export default {
             //login
             .post("/api/user/login", this.loginUser)
             .then(res => {
-              //console.log(res);
-              //登入成功取得token
+              console.log(res.data);
+              //login success
+              //get token
               const { token } = res.data;
-              //save locally
+              //save to localStorage
               localStorage.setItem("accessToken", token);
-              console.log(token);
+              //localStorage.setItem("accessToken") = token;
+              //解析token
+              const decoded = jwt_decode(token);
+              //console.log(decoded);
+              //save token to vuex
+              this.$store.dispatch("setAuthenticated", !this.isEmpty(decoded));
+              this.$store.dispatch("setUser", decoded);
+              this.$router.push("/index");
+            })
+            .catch(error => {
+              //console.log("errldh: " + error.response.status);
+              //   if (error.response.status === 400) {
+              //     this.$message({
+              //       message: "電子郵件！",
+              //       type: "fail"
+              //     });
+              //   }
             });
-          this.$router.push("/index");
         }
-        //else {
-        //   console.log("error submit!!");
-        //   return false;
-        // }
       });
+    },
+    isEmpty(value) {
+      return (
+        value === undefined ||
+        value === null ||
+        (typeof value === "object" && Object.keys(value).length === 0) ||
+        (typeof value === "string" && value.trim().length === 0)
+      );
     }
   }
 };

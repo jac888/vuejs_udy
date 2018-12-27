@@ -33,7 +33,7 @@ app.use(passport.initialize());
 require("./config/passport")(passport);
 
 //設定
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
   console.log("server is running on port ＠" + port);

@@ -1,5 +1,7 @@
 import axios from "axios";
 import { Message, Loading } from "element-ui";
+import { stat } from "fs";
+import router from "./router";
 
 // @定義loading 動畫
 let loading;
@@ -24,6 +26,9 @@ axios.interceptors.request.use(
   config => {
     //加載動畫
     loadingStart();
+    //將token 存入 authorization header
+    if (localStorage.accessToken)
+      config.headers.Authorization = localStorage.accessToken;
     return config;
   },
   error => {
@@ -42,6 +47,29 @@ axios.interceptors.response.use(
     //錯誤提醒
     loadingEnd();
     Message.error(error.response.data);
+    //get status error code is equal 401 token time is up.
+    const { status } = error.response;
+
+    //無效請求或Token過期
+    if (status === 401) {
+      //remove it from storage
+      localStorage.removeItem("accessToken");
+      Message.error("請重新登錄！");
+      //back to login page
+      router.push("/login");
+    }
+    //查無此電子郵件
+    if (status === 400) {
+      Message.error("查無此電子郵件");
+      //back to login page
+      router.push("/login");
+    }
+    //密碼錯誤
+    if (status === 404) {
+      Message.error("密碼錯誤");
+      //back to login page
+      router.push("/login");
+    }
     return Promise.reject(error);
   }
 );
