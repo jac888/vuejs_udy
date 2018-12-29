@@ -4,13 +4,17 @@ const Schema = mongoose.Schema;
 
 const apikeySchema = new Schema(
   {
-    apikey: {
+    exchange: {
+      type: Number,
+      required: true
+    },
+    apiKey: {
       type: String,
       required: true,
       unique: true,
       index: true
     },
-    apisecret: {
+    apiSecret: {
       type: String,
       required: true,
       unique: true,
@@ -20,12 +24,12 @@ const apikeySchema = new Schema(
       type: Boolean,
       default: false
     },
-    date: {
+    dateAdded: {
       type: Date,
       default: Date.now()
     }
   },
-  { _id: false }
+  { collection: "APIKeys" }
 );
 
 const userSchema = new Schema(
@@ -55,7 +59,7 @@ const userSchema = new Schema(
     },
     apikeys: [apikeySchema]
   },
-  { strict: true }
+  { collection: "Users" }
 );
 
 module.exports = User = mongoose.model("users", userSchema);

@@ -37,7 +37,6 @@ router.post(
     if (req.body.desc) apiObj.exchange = req.body.exchange;
     if (req.body.income) apiObj.apikey = req.body.apikey;
     if (req.body.expense) apiObj.apisecret = req.body.apisecret;
-    if (req.body.enabled) apiObj.enabled = req.body.enabled;
     if (req.body.remark) apiObj.remark = req.body.remark;
 
     new APIKEY(apiObj)

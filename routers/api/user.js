@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 
 // @Models / User
 const User = require("../../models/User");
-
+const APIKeys = require("../../models/APIKeys");
 // @gravatar
 const gravatar = require("gravatar");
 
@@ -100,7 +100,11 @@ router.post("/register", urlencodedParser, (req, res) => {
           $push: {
             apikeys: {
               $each: [
-                { apikey: req.body.apikey, apisecret: req.body.apisecret }
+                {
+                  apikey: req.body.apikey,
+                  apisecret: req.body.apisecret,
+                  exchange: req.body.exchange
+                }
               ]
             }
           }
@@ -160,7 +164,67 @@ router.post("/register", urlencodedParser, (req, res) => {
       .catch(err => console.log(err));
   });
 
-  // $route  Get /api/users/current
+  // $route  Get /api/user
+  // @desc   返回current user
+  // @access Private verify token (passport)
+
+  router.get(
+    "/",
+    urlencodedParser,
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      User.find()
+        .then(user => {
+          if (!user) return res.status(404).json("没有任何内容");
+          res.json(user);
+        })
+        .catch(err => res.status(404).json(err));
+    }
+  );
+
+  // $route  Get /api/user/APIKEYs
+  // @desc   返回current user
+  // @access Private verify token (passport)
+
+  router.get(
+    "/APIKEYs/:id",
+    urlencodedParser,
+    passport.authenticate("jwt", { session: false }),
+    (req, res) => {
+      console.log(`API Request id: ${req.params.id}`);
+
+      User.findOne({ "apikeys.apikey": "abc123" }, function(err, the_user) {
+        if (err) console.log(err);
+        if (the_user) {
+          console.log(the_user.apikeys[0].apikey); //goku
+          // let count = the_user.apikeys.length;
+          // console.log(`count is ${count}!`);
+          res.json(the_user.apikeys);
+        }
+      });
+
+      // User.aggregate(
+      //   { $unwind: "$apikeys" },
+      //   { $match: { "apikeys.apikey": "abc123" } },
+      //   function(err, result) {
+      //     console.log(result);
+      //   }
+      // );
+
+      // User.find({ _id: req.params.id })
+      //   .populate({
+      //     path: "apikeys",
+      //     //match: { age: { $gte: 18 } },
+      //     select: "apikey apisecret exchange enabled"
+      //   })
+      //   .exec()
+      //   .then(user => {
+      //     console.log(`user got! : ` + user);
+      //   });
+    }
+  );
+
+  // $route  Get /api/user/current
   // @desc   返回current user
   // @access Private verify token (passport)
 
