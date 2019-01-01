@@ -8,13 +8,13 @@ const apikeySchema = new Schema(
       type: Number,
       required: true
     },
-    apiKey: {
+    apikey: {
       type: String,
       required: true,
       unique: true,
       index: true
     },
-    apiSecret: {
+    apisecret: {
       type: String,
       required: true,
       unique: true,
@@ -29,7 +29,7 @@ const apikeySchema = new Schema(
       default: Date.now()
     }
   },
-  { collection: "APIKeys" }
+  { _id: false }
 );
 
 const userSchema = new Schema(

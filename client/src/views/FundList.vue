@@ -1,17 +1,17 @@
 <template>
-   <el-table :data="tableData" border style="width: 100%">    
-      <el-table-column label="是否啟用" prop="enabled" align="center" >
-         <template slot-scope="scope">
-          <el-checkbox/>
-        </template>
-      </el-table-column>
-     <el-table-column label="交易所" prop="exchange" align="center" >
+   <el-table :data="tableData" border style="width: 100%" v-if="tableData.length > 0">    
+    <el-table-column label="是否啟用" >
+        <template slot-scope="scope">
+        <el-checkbox :checked="tableData.enabled" @change="checked=>checkRow(checked, scope.row)"/>
+      </template>
+    </el-table-column>
+     <el-table-column label="交易所" prop="exchange" align="center" :formatter="exgFormat">
       </el-table-column>
       <el-table-column label="API密鑰" prop="apikey" align="center" >
       </el-table-column>
       <el-table-column label="API密碼" prop="apisecret" align="center" >
       </el-table-column>
-      <el-table-column label="加入日期" prop="dateAdded" align="center" >
+      <el-table-column label="加入日期" prop="dateAdded" align="center" :formatter="dateFormat" >
       </el-table-column>
    </el-table>
 </template>
@@ -40,48 +40,61 @@ export default {
     //get table data
     getTradeData() {
       this.$axios
-        .get("/api/user/APIKEYs/5c27cb59c03179285fadd566")
+        .get("/api/user/APIKEYs/5c2b3c068918d349050d6896")
         .then(res => {
-          console.log(res);
+          console.log(`res: ${JSON.stringify(res)}`);
           this.tableData = res.data;
         })
         .catch(err => {
-          console.log(err);
+          console.log("error : " + err);
         });
     },
     //时间格式化
     dateFormat: function(row, column) {
       var date = row[column.property];
       if (date == undefined) {
-        return "123";
+        return "";
       }
       return moment(date).format("YYYY-MM-DD HH:mm:ss");
     },
     exgFormat: function(row, column, cellValue) {
       let rtnVal = "";
+      console.log(cellValue);
+      console.log(typeof cellValue);
       switch (cellValue) {
+        case "0":
         case 0:
           rtnVal = "幣安";
+          break;
+        case "1":
         case 1:
           rtnVal = "OKEx";
+          break;
+        case "2":
         case 2:
           rtnVal = "Bitfinex";
-        case "jac":
-          rtnVal = "jac 交易所";
+          break;
+        default:
+          rtnVal = "";
+          break;
       }
       return rtnVal;
+    },
+    checkRow(checked, row) {
+      console.log(`checked:${checked}`);
+      console.log(`row:${JSON.stringify(row)}`);
     }
   },
   computed: {
-    //,
-    // rooms() {
-    //   let rooms = {}
-    //   this.tableData.forEach(row => {
-    //     row.rooms.forEach(room => {
-    //       rooms[room.name] = 1
-    //     })
-    //   })
-    //   return Object.keys(rooms)
+    // cmp: {
+    //   get: function(row, column, cellValue) {
+    //     console.log(12345);
+    //     console.log(cellValue);
+    //     return this.tableData.enabled;
+    //   },
+    //   set: function(val) {
+    //     this.$data.cmpVariable = val;
+    //   }
     // }
   }
 };

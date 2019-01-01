@@ -84,8 +84,8 @@ router.post("/register", urlencodedParser, (req, res) => {
     urlencodedParser,
     passport.authenticate("jwt", { session: false }),
     (req, res) => {
-      //console.log("apikey:" + req.body.apikey);
-      //console.log("apisecret:" + req.body.apisecret);
+      console.log("apikey:" + req.body.apikey);
+      console.log("apisecret:" + req.body.apisecret);
       console.log(`Request id: ${req.params.id}`);
       const apiObj = {};
       if (req.body.apikey) apiObj.apikey = req.body.apikey;
@@ -193,7 +193,7 @@ router.post("/register", urlencodedParser, (req, res) => {
     (req, res) => {
       console.log(`API Request id: ${req.params.id}`);
 
-      User.findOne({ "apikeys.apikey": "abc123" }, function(err, the_user) {
+      User.findOne({ "apikeys.apikey": "33333" }, function(err, the_user) {
         if (err) console.log(err);
         if (the_user) {
           console.log(the_user.apikeys[0].apikey); //goku

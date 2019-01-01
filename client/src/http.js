@@ -27,8 +27,14 @@ axios.interceptors.request.use(
     //加載動畫
     loadingStart();
     //將token 存入 authorization header
-    if (localStorage.accessToken)
+    var token = localStorage.accessToken;
+    if (token) {
+      console.log("token : " + token);
       config.headers.Authorization = localStorage.accessToken;
+    } else {
+      console.log("no access token!");
+    }
+
     return config;
   },
   error => {
@@ -67,6 +73,12 @@ axios.interceptors.response.use(
     //密碼錯誤
     if (status === 404) {
       Message.error("密碼錯誤");
+      //back to login page
+      router.push("/login");
+    }
+    //密碼錯誤
+    if (status === 500) {
+      Message.error("無法訪問");
       //back to login page
       router.push("/login");
     }
